@@ -1,0 +1,214 @@
+<html xmlns:string="xalan://java.lang.String" xmlns:lxslt="http://xml.apache.org/xslt">
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Unit Test Results: All Failures</title>
+        <link rel="stylesheet" type="text/css" title="Style" href="stylesheet.css">
+    </head>
+    <body onload="open('allclasses-frame.html','classListFrame')">
+        <h1>Unit Test Results.</h1>
+        <table width="100%">
+            <tr>
+                <td align="left"></td><td align="right">Designed for use with <a href="https://www.junit.org/">JUnit</a> and <a href="https://ant.apache.org/">Ant</a>.</td>
+            </tr>
+        </table>
+        <hr size="1">
+        <h2>All Failures</h2>
+        <table class="details" border="0" cellpadding="5" cellspacing="2" width="95%">
+            <tr valign="top">
+                <th>Class</th><th>Name</th><th>Status</th><th width="80%">Type</th><th nowrap>Time(s)</th>
+            </tr>
+            <tr valign="top" class="Failure">
+                <td><a href="matchle/1_CorpusScoreDebugTest.html">CorpusScoreDebugTest</a></td><td><a name="debugScoreBreakdown"></a><a href="matchle/1_CorpusScoreDebugTest.html#debugScoreBreakdown">debugScoreBreakdown</a></td><td>Failure</td><td>Average-case score for guess 'route' should be 1.25 expected:&lt;1.25&gt; but was:&lt;1.5&gt;
+                    <br>
+                    <br>
+                    <code>junit.framework.AssertionFailedError: Average-case score for guess 'route' should be 1.25 expected:&lt;1.25&gt; but was:&lt;1.5&gt;
+                        <br>
+                        	at org.junit.Assert.fail(Assert.java:89)
+                        <br>
+                        	at org.junit.Assert.failNotEquals(Assert.java:835)
+                        <br>
+                        	at org.junit.Assert.assertEquals(Assert.java:555)
+                        <br>
+                        	at matchle.CorpusScoreDebugTest.debugScoreBreakdown(CorpusScoreDebugTest.java:50)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+                        <br>
+                        	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+                        <br>
+                        	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+                        <br>
+                        	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+                        <br>
+                        	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+                        <br>
+                        	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+                        <br>
+                        	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+                        <br>
+                        	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+                        <br>
+                        	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+                        <br>
+                        	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+                        <br>
+                        	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:50)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:535)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1197)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1042)
+                        <br>
+                    </code></td><td>0.022</td>
+            </tr>
+            <tr valign="top" class="Failure">
+                <td><a href="matchle/4_NGramMatcherTest.html">NGramMatcherTest</a></td><td><a name="testCorpusFiltering"></a><a href="matchle/4_NGramMatcherTest.html#testCorpusFiltering">testCorpusFiltering</a></td><td>Failure</td><td>Only 'apple' should match expected:&lt;1&gt; but was:&lt;0&gt;
+                    <br>
+                    <br>
+                    <code>junit.framework.AssertionFailedError: Only 'apple' should match expected:&lt;1&gt; but was:&lt;0&gt;
+                        <br>
+                        	at org.junit.Assert.fail(Assert.java:89)
+                        <br>
+                        	at org.junit.Assert.failNotEquals(Assert.java:835)
+                        <br>
+                        	at org.junit.Assert.assertEquals(Assert.java:647)
+                        <br>
+                        	at matchle.NGramMatcherTest.testCorpusFiltering(NGramMatcherTest.java:48)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+                        <br>
+                        	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+                        <br>
+                        	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+                        <br>
+                        	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+                        <br>
+                        	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+                        <br>
+                        	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+                        <br>
+                        	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+                        <br>
+                        	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+                        <br>
+                        	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+                        <br>
+                        	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:50)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:535)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1197)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1042)
+                        <br>
+                    </code></td><td>0.012</td>
+            </tr>
+            <tr valign="top" class="Failure">
+                <td><a href="matchle/4_NGramMatcherTest.html">NGramMatcherTest</a></td><td><a name="testSimpleCriteria"></a><a href="matchle/4_NGramMatcherTest.html#testSimpleCriteria">testSimpleCriteria</a></td><td>Failure</td><td>apple should match
+                    <br>
+                    <br>
+                    <code>junit.framework.AssertionFailedError: apple should match
+                        <br>
+                        	at org.junit.Assert.fail(Assert.java:89)
+                        <br>
+                        	at org.junit.Assert.assertTrue(Assert.java:42)
+                        <br>
+                        	at matchle.NGramMatcherTest.testSimpleCriteria(NGramMatcherTest.java:30)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+                        <br>
+                        	at java.base/jdk.internal.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:77)
+                        <br>
+                        	at java.base/jdk.internal.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+                        <br>
+                        	at java.base/java.lang.reflect.Method.invoke(Method.java:569)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+                        <br>
+                        	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+                        <br>
+                        	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+                        <br>
+                        	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner$1.evaluate(BlockJUnit4ClassRunner.java:100)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:103)
+                        <br>
+                        	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:63)
+                        <br>
+                        	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+                        <br>
+                        	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+                        <br>
+                        	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+                        <br>
+                        	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+                        <br>
+                        	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+                        <br>
+                        	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+                        <br>
+                        	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+                        <br>
+                        	at junit.framework.JUnit4TestAdapter.run(JUnit4TestAdapter.java:50)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.run(JUnitTestRunner.java:535)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.launch(JUnitTestRunner.java:1197)
+                        <br>
+                        	at org.apache.tools.ant.taskdefs.optional.junit.JUnitTestRunner.main(JUnitTestRunner.java:1042)
+                        <br>
+                    </code></td><td>0.001</td>
+            </tr>
+        </table>
+    </body>
+</html>
