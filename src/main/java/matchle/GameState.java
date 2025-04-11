@@ -3,7 +3,7 @@ package matchle;
 import java.io.Serializable;
 
 /**
- * 表示游戏状态的类，用于保存和加载游戏
+ * the class to represent the game state, for saving and loading the game
  */
 public class GameState implements Serializable {
     

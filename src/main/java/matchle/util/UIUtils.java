@@ -1,34 +1,33 @@
 package matchle.util;
 
 import java.awt.Component;
-
 import javax.swing.JOptionPane;
 
 /**
- * UI操作相关的工具类
+ * utility class for UI operations
  */
 public final class UIUtils {
     
     private UIUtils() {
-        // 防止实例化
+        // prevent instantiation
     }
     
     /**
-     * 显示信息对话框
+     * show the information dialog
      */
     public static void showInfoMessage(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.INFORMATION_MESSAGE);
     }
     
     /**
-     * 显示警告对话框
+     * show the warning dialog
      */
     public static void showWarningMessage(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.WARNING_MESSAGE);
     }
     
     /**
-     * 显示错误对话框
+     * show the error dialog
      */
     public static void showErrorMessage(Component parent, String message, String title) {
         JOptionPane.showMessageDialog(parent, message, title, JOptionPane.ERROR_MESSAGE);

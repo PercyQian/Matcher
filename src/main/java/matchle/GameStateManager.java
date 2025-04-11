@@ -7,12 +7,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
 /**
- * 管理游戏状态的保存和加载
+ * manage the saving and loading of the game state
  */
 public class GameStateManager {
     
     /**
-     * 保存游戏状态到文件
+     * save the game state to a file
      */
     public static void saveGame(GameState state, String filename) throws IOException {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filename))) {
@@ -21,7 +21,7 @@ public class GameStateManager {
     }
     
     /**
-     * 从文件加载游戏状态
+     * load the game state from a file
      */
     public static GameState loadGame(String filename) throws IOException, ClassNotFoundException {
         try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filename))) {

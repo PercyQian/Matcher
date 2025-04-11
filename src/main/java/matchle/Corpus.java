@@ -62,14 +62,14 @@ public final class Corpus implements Iterable<NGram>, Serializable {
     // ---------------- new added function for hw4 ----------------
 
     /**
-     * 优化后的score方法，使用缓存提高性能
+     * optimized score method, use cache to improve performance
      */
     public long score(NGram key, NGram guess) {
         if (corpus.isEmpty()) {
             throw new EmptyCorpusException();
         }
         
-        // 使用computeIfAbsent的单一操作
+        // use computeIfAbsent in a single operation
         return scoreCache
             .computeIfAbsent(key, k -> new ConcurrentHashMap<>())
             .computeIfAbsent(guess, g -> {
@@ -79,63 +79,63 @@ public final class Corpus implements Iterable<NGram>, Serializable {
     }
     
     /**
-     * 优化后的scoreWorstCase方法，使用缓存和并行计算
+     * optimized scoreWorstCase method, use cache and parallel computation
      */
     public long scoreWorstCase(NGram guess) {
         if (corpus.isEmpty()) {
             throw new EmptyCorpusException();
         }
         
-        // 检查缓存
+        // check cache
         if (worstCaseCache.containsKey(guess)) {
             return worstCaseCache.get(guess);
         }
         
-        // 使用并行流计算提高性能
+        // use parallel stream to improve performance
         long worst = corpus.stream()
                 .parallel()
                 .mapToLong(key -> score(key, guess))
                 .max()
                 .orElse(0);
                 
-        // 存入缓存
+        // put into cache
         worstCaseCache.put(guess, worst);
         
         return worst;
     }
     
     /**
-     * 优化后的scoreAverageCase方法，使用缓存和并行计算
+     * optimized scoreAverageCase method, use cache and parallel computation
      */
     public double scoreAverageCase(NGram guess) {
         if (corpus.isEmpty()) {
             throw new EmptyCorpusException();
         }
         
-        // 检查缓存
+        // check cache
         if (averageCaseCache.containsKey(guess)) {
             return averageCaseCache.get(guess);
         }
         
-        // 使用并行流计算提高性能
+        // use parallel stream to improve performance
         double average = corpus.stream()
                 .parallel()
                 .mapToLong(key -> score(key, guess))
                 .average()
                 .orElse(0);
                 
-        // 存入缓存
+        // put into cache
         averageCaseCache.put(guess, average);
         
         return average;
     }
 
     /**
-     * 一个通用的方法替代bestWorstCaseGuess和bestAverageCaseGuess中的重复代码
-     * @param <T> 分数类型
-     * @param scoreFunction 计算分数的函数
-     * @param comparator 比较分数的比较器
-     * @return 最佳猜测
+     * a general method to replace the repeated code in bestWorstCaseGuess and bestAverageCaseGuess
+     * @param <T> the type of the score
+     * @param scoreFunction the function to calculate the score
+     * @param comparator the comparator to compare the score
+     * @return the best guess
      */
     private <T extends Comparable<T>> NGram findBestGuess(
             Function<NGram, T> scoreFunction, 
@@ -159,23 +159,20 @@ public final class Corpus implements Iterable<NGram>, Serializable {
     }
 
     /**
-     * 返回最佳的worst-case猜测
+     * return the best worst-case guess
      */
     public NGram bestWorstCaseGuess() {
         return findBestGuess(this::scoreWorstCase, Long.MAX_VALUE);
     }
 
     /**
-     * 返回最佳的average-case猜测
+     * return the best average-case guess
      */
     public NGram bestAverageCaseGuess() {
         return findBestGuess(this::scoreAverageCase, Double.MAX_VALUE);
     }
 
     /**
-     * 根据自定义准则返回最佳猜测。准则是一个 ToLongFunction，
-     * 对每个候选 n-gram 计算一个长整型分数，
-     * 最后选择使该分数最小的 n-gram。
      * return best guess based on special rules, a toLongFunction
      * compute a long for each n-gram
      * choose smallest n-gram score
@@ -202,7 +199,7 @@ public final class Corpus implements Iterable<NGram>, Serializable {
     public static final class Builder {
         private final Set<NGram> ngrams;
 
-        // 使用带参数的构造方法
+        // use the constructor with parameters
         private Builder(Set<NGram> ngrams) {
             this.ngrams = new HashSet<>(ngrams);
         }

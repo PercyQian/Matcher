@@ -4,16 +4,16 @@ import matchle.Corpus;
 import matchle.NGram;
 
 /**
- * 评分策略接口，使用策略模式减少代码重复
+ * scoring strategy interface, use strategy pattern to reduce code duplication
  */
 public interface ScoringStrategy {
     /**
-     * 计算给定猜测的分数
+     * calculate the score of the given guess
      */
     double calculateScore(Corpus corpus, NGram guess);
     
     /**
-     * 找出最佳猜测
+     * find the best guess
      */
     NGram findBestGuess(Corpus corpus);
 } 

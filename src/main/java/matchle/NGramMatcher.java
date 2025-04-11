@@ -17,7 +17,7 @@ final class NGramMatcher {
     }
 
     public static NGramMatcher of(NGram key, NGram guess) {
-        // 长度不同仍返回 matcher，在 match() 中会处理
+        // even if the length is different, still return the matcher, it will be handled in match()
         return new NGramMatcher(key, guess);
     }
 
@@ -35,7 +35,7 @@ final class NGramMatcher {
         return buildFilter(correctMatches, misplacedMatches, absentLetters);
     }
     
-    // 调试方法，打印详细的匹配信息
+    // debug method, print detailed match information
     public String debugMatch() {
         if (key.size() != guess.size()) {
             return "Size mismatch between key and guess.";
@@ -68,7 +68,7 @@ final class NGramMatcher {
         return correctMatches;
     }
 
-    // 提取辅助方法：在 key 中查找第 guessIndex 位未匹配且等于 guess.get(guessIndex) 的字符索引
+    // auxiliary method: find the index of the character in key that is not matched and equals to guess.get(guessIndex)
     private int findMisplacedMatchIndex(int guessIndex, boolean[] keyMatched) {
         for (int j = 0; j < key.size(); j++) {
             if (!keyMatched[j] && key.get(j).equals(guess.get(guessIndex))) {
@@ -142,12 +142,12 @@ final class NGramMatcher {
             + formatAbsentLetters(absentLetters);
 
         return Filter.from(ngram -> {
-            // 首先检查是否是原始的key，如果是则直接返回true
+            // first check if it is the original key, if so, return true
             if (ngram.equals(key)) {
                 return true;
             }
             
-            // 检查其他NGram
+            // check other NGrams
             return correctMatches.entrySet().stream().allMatch(e -> ngram.get(e.getKey()).equals(e.getValue()))
                 && misplacedMatches.stream().allMatch(ngram::containsElsewhere)
                 && absentLetters.stream().noneMatch(ngram::contains);

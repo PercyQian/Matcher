@@ -25,14 +25,14 @@ public class CorpusLoader {
     public static Corpus loadEnglishWords(int wordLength) {
         List<NGram> ngrams = new ArrayList<>();
         try {
-            // 使用更小的词库URL
+            // use a smaller word list URL
             URL url = new URL("https://raw.githubusercontent.com/dwyl/english-words/master/words_alpha.txt");
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()))) {
                 ngrams = reader.lines()
                         .map(String::trim)
-                        .filter(word -> word.length() == wordLength) // 筛选指定长度的单词
+                        .filter(word -> word.length() == wordLength) // filter words of exact length
                         .map(String::toLowerCase)
-                        .limit(300)  // 限制只加载前1000个符合条件的单词
+                        .limit(300)  // limit to the first 300 words
                         .map(NGram::from)
                         .collect(Collectors.toList());
             }
@@ -44,10 +44,10 @@ public class CorpusLoader {
     }
 
     /**
-     * 测试各种评分函数。
+     * test various scoring functions.
      */
     public static void main(String[] args) {
-        // 构造 5 个字母的词库
+        // construct a corpus of 5-letter words
         Corpus corpus = loadEnglishWords(5);
         if (corpus == null) {
             System.out.println("Corpus is empty or inconsistent.");
@@ -55,37 +55,35 @@ public class CorpusLoader {
         }
         System.out.println("Loaded corpus with " + corpus.size() + " 5-letter words.");
 
-        // 选择一个猜测单词，比如 "route"
+        // choose a guess word, for example "route"
         NGram guess = NGram.from("abced");
         System.out.println("Testing score functions for guess: " + guess);
 
-        // 测试 score(key, guess) －以 corpus 中某个候选 key 为例
-        // 此处取 corpus 中第一个作为 key 示例
-        //test score(key,guess) 
+        // test score(key,guess) - take the first word in corpus as an example
         NGram sampleKey = corpus.iterator().next();
         long score = corpus.score(sampleKey, guess);
         System.out.println("Score for key " + sampleKey + " and guess " + guess + " = " + score);
 
-        // 测试 worst-case 分数（对于 guess，取所有候选 key 的最大 score）
+        // test scoreWorstCase(guess) - take the first word in corpus as an example
         long worstCase = corpus.scoreWorstCase(guess);
         System.out.println("Worst-case score for guess " + guess + " = " + worstCase);
 
-        // 测试 average-case 分数（所有候选 key 的 score 平均值）
+        // test scoreAverageCase(guess) - take the first word in corpus as an example
         double avgCase = corpus.scoreAverageCase(guess);
         System.out.println("Average-case score for guess " + guess + " = " + avgCase);
 
-        // 测试最佳猜测（根据 worst-case 以及 average-case 准则）
+        // test bestWorstCaseGuess() and bestAverageCaseGuess()
         NGram bestWorst = corpus.bestWorstCaseGuess();
         NGram bestAverage = corpus.bestAverageCaseGuess();
         System.out.println("Best worst-case guess: " + bestWorst);
         System.out.println("Best average-case guess: " + bestAverage);
 
-        // 添加困难案例测试
+        // test hard case
         testHardCase();
     }
 
     /**
-     * 测试困难案例的评分函数。
+     * test the scoring functions for hard case.
      */
     public static void testHardCase() {
         Corpus corpus = loadEnglishWords(5);
@@ -98,17 +96,17 @@ public class CorpusLoader {
         System.out.println("\n=== Testing Hard Case ===");
         System.out.println("Loaded special corpus with " + corpus.size() + " words.");
 
-        // 选择 "where" 作为测试单词
+        // choose "where" as the test word
         NGram guess = NGram.from("where");
         System.out.println("Testing score functions for guess: " + guess);
 
-        // 测试每个可能的密钥的得分
+        // test the score for each possible key
         for (NGram key : corpus) {
             long score = corpus.score(key, guess);
             System.out.println("Score for key " + key + " and guess " + guess + " = " + score);
         }
 
-        // 测试最佳猜测
+        // test the best guess
         NGram bestWorst = corpus.bestWorstCaseGuess();
         System.out.println("Best worst-case guess: " + bestWorst);
     }
