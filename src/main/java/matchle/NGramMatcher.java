@@ -23,7 +23,8 @@ final class NGramMatcher {
 
     public Filter match() {
         if (key.size() != guess.size()) {
-            return Filter.FALSE;
+            // Create a filter that always returns false
+            return Filter.from(ngram -> false, "Size mismatch");
         }
         boolean[] keyMatched = new boolean[key.size()];
         boolean[] guessMatched = new boolean[guess.size()];

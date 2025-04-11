@@ -1,16 +1,13 @@
 package matchle;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 public class MatchleGame {
+    private GameLogic gameLogic;
     private Corpus corpus;
-    private NGram key;
-    private Corpus candidateCorpus;
-    private Optional<Filter> accumulatedFilter;
     private int maxRounds = 10;
+    
+    public MatchleGame() {
+        this.gameLogic = new GameLogic();
+    }
     
     public static void main(String[] args) {
         MatchleGame game = new MatchleGame();
@@ -20,37 +17,16 @@ public class MatchleGame {
     
     private void initialize() {
         loadCorpus();
-        selectRandomKey();
-        initializeGameState();
+        gameLogic.initialize(corpus);
+        System.out.println("Secret key (hidden): " + gameLogic.getSecretKey());
     }
     
     private void loadCorpus() {
         corpus = CorpusLoader.loadEnglishWords(5);
         if (corpus == null || corpus.size() == 0) {
             System.out.println("Corpus is empty or invalid.");
-            corpus = createDefaultCorpus();
+            corpus = gameLogic.createDefaultCorpus();
         }
-    }
-    
-    private Corpus createDefaultCorpus() {
-        return Corpus.Builder.of()
-                .add(NGram.from("rebus"))
-                .add(NGram.from("redux"))
-                .add(NGram.from("route"))
-                .add(NGram.from("hello"))
-                .build();
-    }
-    
-    private void selectRandomKey() {
-        List<NGram> keys = new ArrayList<>(corpus.corpus());
-        Collections.shuffle(keys);
-        key = keys.get(0);
-        System.out.println("Secret key (hidden): " + key);
-    }
-    
-    private void initializeGameState() {
-        accumulatedFilter = Optional.empty();
-        candidateCorpus = corpus;
     }
     
     private void play() {
@@ -60,7 +36,7 @@ public class MatchleGame {
                 return; // Game over
             }
         }
-        System.out.println("Maximum rounds reached. The key was: " + key);
+        System.out.println("Maximum rounds reached. The key was: " + gameLogic.getSecretKey());
     }
     
     private boolean playRound(int round) {
@@ -76,66 +52,50 @@ public class MatchleGame {
     }
     
     private NGram makeGuess() {
-        NGram guess = candidateCorpus.bestWorstCaseGuess();
+        NGram guess = gameLogic.getBestGuess();
         System.out.println("Best guess: " + guess);
         return guess;
     }
     
     private boolean isCorrectGuess(NGram guess) {
-        if (guess.equals(key)) {
-            System.out.println("Correct guess! The key is: " + key);
+        if (gameLogic.isCorrectGuess(guess)) {
+            System.out.println("Correct guess! The key is: " + gameLogic.getSecretKey());
             return true;
         }
         return false;
     }
     
     private void updateGameState(NGram guess) {
-        Filter roundFilter = NGramMatcher.of(key, guess).match();
+        Filter roundFilter = gameLogic.processGuess(guess);
         System.out.println("Round filter: " + roundFilter);
-        
-        updateAccumulatedFilter(roundFilter);
-        updateCandidateCorpus();
-    }
-    
-    private void updateAccumulatedFilter(Filter roundFilter) {
-        if (accumulatedFilter.isPresent()) {
-            accumulatedFilter = Optional.of(accumulatedFilter.get().and(Optional.of(roundFilter)));
-        } else {
-            accumulatedFilter = Optional.of(roundFilter);
-        }
-    }
-    
-    private void updateCandidateCorpus() {
-        Corpus newCorpus = Corpus.Builder.of(candidateCorpus)
-                .filter(accumulatedFilter.get())
-                .build();
-        
-        if (newCorpus == null) {
-            System.out.println("No valid candidates. The key was: " + key);
-            candidateCorpus = Corpus.Builder.of().build(); // Empty corpus
-        } else {
-            candidateCorpus = newCorpus;
-        }
-        
-        System.out.println("Remaining candidate count: " + candidateCorpus.size());
+        System.out.println("Remaining candidate count: " + gameLogic.getCandidateCorpus().size());
     }
     
     private boolean checkGameTermination() {
-        // Check if only one candidate remains
-        if (candidateCorpus.size() == 1) {
-            NGram remaining = candidateCorpus.corpus().iterator().next();
-            System.out.println("Candidate corpus reduced to one: " + remaining);
-            if (remaining.equals(key)) {
-                System.out.println("Found key: " + key);
-            } else {
-                System.out.println("Remaining candidate does not match key. Key was: " + key);
-            }
-            return true;
+        return handleSingleCandidate() || handleEmptyCorpus();
+    }
+    
+    private boolean handleSingleCandidate() {
+        Corpus candidateCorpus = gameLogic.getCandidateCorpus();
+        if (candidateCorpus.size() != 1) {
+            return false;
         }
         
-        // Check if the candidate corpus is empty
-        if (candidateCorpus.size() == 0) {
-            System.out.println("No candidates remain. The key was: " + key);
+        NGram remaining = candidateCorpus.corpus().iterator().next();
+        System.out.println("Candidate corpus reduced to one: " + remaining);
+        
+        if (remaining.equals(gameLogic.getSecretKey())) {
+            System.out.println("Found key: " + gameLogic.getSecretKey());
+        } else {
+            System.out.println("Remaining candidate does not match key. Key was: " + gameLogic.getSecretKey());
+        }
+        
+        return true;
+    }
+    
+    private boolean handleEmptyCorpus() {
+        if (gameLogic.getCandidateCorpus().size() == 0) {
+            System.out.println("No candidates remain. The key was: " + gameLogic.getSecretKey());
             return true;
         }
         

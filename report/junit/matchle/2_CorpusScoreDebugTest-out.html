@@ -1,0 +1,47 @@
+<html xmlns:string="xalan://java.lang.String" xmlns:lxslt="http://xml.apache.org/xslt">
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Standard Output from CorpusScoreDebugTest</title>
+    </head>
+    <body>
+        <pre>Debugging score breakdown for guess: route
+-----
+Key: hello
+Score: 1
+Key: hello
+Guess: route
+Correct Matches: {}
+Misplaced Matches: [IndexedCharacter[index=4, character=e], IndexedCharacter[index=1, character=o]]
+Absent Letters: [r, t, u]
+
+-----
+Key: route
+Score: 1
+Key: route
+Guess: route
+Correct Matches: {0=r, 1=o, 2=u, 3=t, 4=e}
+Misplaced Matches: []
+Absent Letters: []
+
+-----
+Key: rebus
+Score: 2
+Key: rebus
+Guess: route
+Correct Matches: {0=r}
+Misplaced Matches: [IndexedCharacter[index=4, character=e], IndexedCharacter[index=2, character=u]]
+Absent Letters: [t, o]
+
+-----
+Key: redux
+Score: 2
+Key: redux
+Guess: route
+Correct Matches: {0=r}
+Misplaced Matches: [IndexedCharacter[index=4, character=e], IndexedCharacter[index=2, character=u]]
+Absent Letters: [t, o]
+
+Total score = 6 over 4 keys, average = 1.5
+</pre>
+    </body>
+</html>

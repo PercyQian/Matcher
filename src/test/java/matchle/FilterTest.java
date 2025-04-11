@@ -71,10 +71,24 @@ public class FilterTest {
     @Test
     public void testWithPattern() {
         // 测试withPattern方法
-        Filter filter = Filter.from(ngram -> true).withPattern("Test Pattern");
+        // Create a filter and then add a pattern
+        Filter filter = Filter.from(ngram -> ngram.size() == 3);
+        Filter patternFilter = filter.withPattern("Size is 3");
+        
+        // Check that the pattern is added without changing the behavior
+        NGram size3 = NGram.from("abc");
+        NGram size4 = NGram.from("abcd");
+        
+        assertTrue("NGram of size 3 should pass in the new filter", patternFilter.test(size3));
+        assertFalse("NGram of size 4 should fail in the new filter", patternFilter.test(size4));
+        assertEquals("toString should return the new pattern", "Size is 3", patternFilter.toString());
+        
+        // Check that the original filter is unchanged
+        assertEquals("toString of original filter should be unchanged", "Filter[]", filter.toString());
         
         // 验证toString方法使用pattern
-        assertEquals("Filter toString should return pattern", "Test Pattern", filter.toString());
+        Filter textPattern = Filter.from(ngram -> true).withPattern("Test Pattern");
+        assertEquals("Filter toString should return pattern", "Test Pattern", textPattern.toString());
     }
     
     @Test
@@ -87,11 +101,76 @@ public class FilterTest {
     }
     
     @Test
-    public void testFALSEConstant() {
-        // 测试FALSE常量
-        NGram key = NGram.from("apple");
+    public void testBasicPredicate() {
+        // Create a filter that checks if length is 3
+        Filter filter = Filter.from(ngram -> ngram.size() == 3);
         
-        // FALSE过滤器应该始终返回false
-        assertFalse("FALSE filter should always return false", Filter.FALSE.test(key));
+        // Test with NGrams of different sizes
+        NGram size3 = NGram.from("abc");
+        NGram size4 = NGram.from("abcd");
+        
+        assertTrue("NGram of size 3 should pass", filter.test(size3));
+        assertFalse("NGram of size 4 should fail", filter.test(size4));
+    }
+    
+    @Test
+    public void testFilterWithPattern() {
+        // Create a filter with a pattern
+        Filter filter = Filter.from(ngram -> ngram.size() == 3, "Size is 3");
+        
+        // Check the pattern in toString
+        assertEquals("toString should return the pattern", "Size is 3", filter.toString());
+    }
+    
+    @Test
+    public void testFilterWithoutPattern() {
+        // Create a filter without a pattern
+        Filter filter = Filter.from(ngram -> ngram.size() == 3);
+        
+        // Check the pattern in toString
+        assertEquals("toString should return default format", "Filter[]", filter.toString());
+    }
+    
+    @Test
+    public void testAnd() {
+        // Create filters for testing
+        Filter sizeFilter = Filter.from(ngram -> ngram.size() == 3, "Size is 3");
+        Filter letterFilter = Filter.from(ngram -> ngram.contains('a'), "Contains 'a'");
+        
+        // Combine filters
+        Filter combined = sizeFilter.and(Optional.of(letterFilter));
+        
+        // Test combined filter
+        NGram size3WithA = NGram.from("abc");
+        NGram size3WithoutA = NGram.from("def");
+        NGram size4WithA = NGram.from("abcd");
+        
+        assertTrue("Size 3 with 'a' should pass", combined.test(size3WithA));
+        assertFalse("Size 3 without 'a' should fail", combined.test(size3WithoutA));
+        assertFalse("Size 4 with 'a' should fail", combined.test(size4WithA));
+        
+        // Check the combined pattern
+        assertEquals("Combined pattern should show both conditions", "Size is 3 AND Contains 'a'", combined.toString());
+    }
+    
+    @Test
+    public void testAndWithEmpty() {
+        // Create a filter
+        Filter sizeFilter = Filter.from(ngram -> ngram.size() == 3, "Size is 3");
+        
+        // Combine with empty optional
+        Filter result = sizeFilter.and(Optional.empty());
+        
+        // Should return the original filter
+        assertEquals("Should return the original filter", sizeFilter, result);
+    }
+    
+    @Test
+    public void testFalseFilter() {
+        // Test that a filter that always returns false
+        Filter falseFilter = Filter.from(ngram -> false, "Always false");
+        NGram key = NGram.from("test");
+        
+        assertFalse("FALSE filter should always return false", falseFilter.test(key));
     }
 } 
