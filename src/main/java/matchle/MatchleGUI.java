@@ -414,6 +414,36 @@ public class MatchleGUI extends JFrame {
         guessField.setText("");
     }
 
+    private boolean checkGameTermination() {
+        return handleSingleCandidate() || handleEmptyCorpus();
+    }
+
+    private boolean handleSingleCandidate() {
+        if (candidateCorpus.size() != 1) {
+            return false;
+        }
+        
+        NGram remaining = candidateCorpus.corpus().iterator().next();
+        System.out.println("候选词库缩减为一个: " + remaining);
+        
+        if (remaining.equals(secretKey)) {
+            System.out.println("找到密钥: " + secretKey);
+        } else {
+            System.out.println("剩余候选词与密钥不匹配。密钥是: " + secretKey);
+        }
+        
+        return true;
+    }
+
+    private boolean handleEmptyCorpus() {
+        if (candidateCorpus.size() == 0) {
+            System.out.println("没有剩余候选词。密钥是: " + secretKey);
+            return true;
+        }
+        
+        return false;
+    }
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             MatchleGUI gui = new MatchleGUI();

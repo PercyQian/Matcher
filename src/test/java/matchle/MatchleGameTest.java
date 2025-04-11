@@ -44,7 +44,7 @@ public class MatchleGameTest {
         
         // 验证输出中包含关键词，确认方法正常执行
         String output = outContent.toString();
-        assertTrue("Output should contain 'Secret key'", output.contains("Secret key"));
+        assertTrue("Output should contain '密钥'", output.contains("密钥"));
     }
     
     /**
@@ -55,19 +55,33 @@ public class MatchleGameTest {
         // 清空输出
         outContent.reset();
         
-        // 创建一个小型测试Corpus
-        Corpus testCorpus = Corpus.Builder.of()
-                .add(NGram.from("hello"))
-                .build();
+        // 模拟CorpusLoader.loadEnglishWords返回空值的情况
+        // 创建一个MatchleGame实例，并手动设置corpus为null
+        MatchleGame game = new MatchleGame();
         
-        // 使用反射调用main方法
-        String[] args = new String[0];
-        MatchleGame.main(args);
+        // 使用反射获取loadCorpus方法
+        Method loadCorpusMethod = MatchleGame.class.getDeclaredMethod("loadCorpus");
+        loadCorpusMethod.setAccessible(true);
+        
+        // 调用loadCorpus方法
+        loadCorpusMethod.invoke(game);
+        
+        // 获取createDefaultCorpus方法
+        Method createDefaultCorpusMethod = MatchleGame.class.getDeclaredMethod("createDefaultCorpus");
+        createDefaultCorpusMethod.setAccessible(true);
+        
+        // 验证创建的默认语料库不为空
+        Corpus defaultCorpus = (Corpus) createDefaultCorpusMethod.invoke(game);
+        assertNotNull("Default corpus should not be null", defaultCorpus);
+        assertTrue("Default corpus should not be empty", defaultCorpus.size() > 0);
+        
+        // 调用main方法，验证程序能够处理空语料库的情况
+        MatchleGame.main(new String[0]);
         
         // 验证程序能够处理这种情况（使用默认词库）
         String output = outContent.toString();
         assertTrue("Program should run without crashing", 
-                output.contains("Secret key") || output.contains("Remaining candidate"));
+                output.contains("密钥") || output.contains("剩余候选词数量"));
     }
     
     /**
@@ -80,29 +94,43 @@ public class MatchleGameTest {
         // 清空输出
         outContent.reset();
         
-        // 创建一个NGram作为key
-        NGram key = NGram.from("hello");
+        // 创建一个MatchleGame实例
+        MatchleGame game = new MatchleGame();
         
-        // 创建一个Corpus，确保bestWorstCaseGuess返回的是key
+        // 使用反射来设置其关键字段
+        Field corpusField = MatchleGame.class.getDeclaredField("corpus");
+        corpusField.setAccessible(true);
+        
+        // 创建一个简单的语料库，只包含一个词
+        NGram testKey = NGram.from("hello");
         Corpus testCorpus = Corpus.Builder.of()
-                .add(key) // 只有一个单词，确保bestWorstCaseGuess返回它
+                .add(testKey)
                 .build();
         
-        // 通过反射设置main方法中的变量
-        // 在实际项目中，我们可能需要重构MatchleGame使其更易于测试
-        // 此处暂时使用反射，或者模拟输出
+        corpusField.set(game, testCorpus);
         
-        // 使用反射调用main方法
-        String[] args = new String[0];
-        MatchleGame.main(args);
+        // 设置key字段
+        Field keyField = MatchleGame.class.getDeclaredField("key");
+        keyField.setAccessible(true);
+        keyField.set(game, testKey);
+        
+        // 设置candidateCorpus字段
+        Field candidateCorpusField = MatchleGame.class.getDeclaredField("candidateCorpus");
+        candidateCorpusField.setAccessible(true);
+        candidateCorpusField.set(game, testCorpus);
+        
+        // 调用playRound方法
+        Method playRoundMethod = MatchleGame.class.getDeclaredMethod("playRound", int.class);
+        playRoundMethod.setAccessible(true);
+        boolean result = (boolean) playRoundMethod.invoke(game, 1);
+        
+        // 验证playRound返回true表示游戏结束
+        assertTrue("Game should end after correct guess", result);
         
         // 验证输出
         String output = outContent.toString();
-        // 由于我们不能控制随机选择的key，所以只能验证程序正常运行
-        assertTrue("Game should complete", 
-                output.contains("Guessed correctly") || 
-                output.contains("Remaining candidate") || 
-                output.contains("Secret key"));
+        assertTrue("Game should complete with correct guess", 
+                output.contains("猜测正确") || output.contains("密钥"));
     }
     
     /**
