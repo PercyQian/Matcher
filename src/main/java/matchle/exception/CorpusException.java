@@ -1,7 +1,7 @@
 package matchle.exception;
 
 /**
- * 词库相关的异常
+ * Corpus-related exceptions
  */
 public class CorpusException extends MatchleException {
     
@@ -16,7 +16,7 @@ public class CorpusException extends MatchleException {
     }
     
     /**
-     * 当词库为空时抛出的异常
+     * Exception thrown when the corpus is empty
      */
     public static class EmptyCorpusException extends CorpusException {
         private static final long serialVersionUID = 1L;
@@ -27,7 +27,7 @@ public class CorpusException extends MatchleException {
     }
     
     /**
-     * 当词库中的单词长度不一致时抛出的异常
+     * Exception thrown when words in the corpus have inconsistent lengths
      */
     public static class InconsistentWordSizeException extends CorpusException {
         private static final long serialVersionUID = 1L;

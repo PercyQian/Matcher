@@ -27,7 +27,7 @@ public class MatchleGame {
     private void loadCorpus() {
         corpus = CorpusLoader.loadEnglishWords(5);
         if (corpus == null || corpus.size() == 0) {
-            System.out.println("语料库为空或无效。");
+            System.out.println("Corpus is empty or invalid.");
             corpus = createDefaultCorpus();
         }
     }
@@ -45,7 +45,7 @@ public class MatchleGame {
         List<NGram> keys = new ArrayList<>(corpus.corpus());
         Collections.shuffle(keys);
         key = keys.get(0);
-        System.out.println("密钥（隐藏）: " + key);
+        System.out.println("Secret key (hidden): " + key);
     }
     
     private void initializeGameState() {
@@ -55,19 +55,19 @@ public class MatchleGame {
     
     private void play() {
         for (int round = 1; round <= maxRounds; round++) {
-            System.out.println("==== 第 " + round + " 轮 ====");
+            System.out.println("==== Round " + round + " ====");
             if (playRound(round)) {
-                return; // 游戏结束
+                return; // Game over
             }
         }
-        System.out.println("已达到最大轮次。密钥是: " + key);
+        System.out.println("Maximum rounds reached. The key was: " + key);
     }
     
     private boolean playRound(int round) {
         NGram guess = makeGuess();
         
         if (isCorrectGuess(guess)) {
-            return true; // 游戏结束
+            return true; // Game over
         }
         
         updateGameState(guess);
@@ -77,13 +77,13 @@ public class MatchleGame {
     
     private NGram makeGuess() {
         NGram guess = candidateCorpus.bestWorstCaseGuess();
-        System.out.println("最佳猜测: " + guess);
+        System.out.println("Best guess: " + guess);
         return guess;
     }
     
     private boolean isCorrectGuess(NGram guess) {
         if (guess.equals(key)) {
-            System.out.println("猜测正确！密钥是: " + key);
+            System.out.println("Correct guess! The key is: " + key);
             return true;
         }
         return false;
@@ -91,7 +91,7 @@ public class MatchleGame {
     
     private void updateGameState(NGram guess) {
         Filter roundFilter = NGramMatcher.of(key, guess).match();
-        System.out.println("本轮过滤器: " + roundFilter);
+        System.out.println("Round filter: " + roundFilter);
         
         updateAccumulatedFilter(roundFilter);
         updateCandidateCorpus();
@@ -111,31 +111,31 @@ public class MatchleGame {
                 .build();
         
         if (newCorpus == null) {
-            System.out.println("没有有效的候选词。密钥是: " + key);
-            candidateCorpus = Corpus.Builder.of().build(); // 空语料库
+            System.out.println("No valid candidates. The key was: " + key);
+            candidateCorpus = Corpus.Builder.of().build(); // Empty corpus
         } else {
             candidateCorpus = newCorpus;
         }
         
-        System.out.println("剩余候选词数量: " + candidateCorpus.size());
+        System.out.println("Remaining candidate count: " + candidateCorpus.size());
     }
     
     private boolean checkGameTermination() {
-        // 检查是否只剩一个候选词
+        // Check if only one candidate remains
         if (candidateCorpus.size() == 1) {
             NGram remaining = candidateCorpus.corpus().iterator().next();
-            System.out.println("候选词库缩减为一个: " + remaining);
+            System.out.println("Candidate corpus reduced to one: " + remaining);
             if (remaining.equals(key)) {
-                System.out.println("找到密钥: " + key);
+                System.out.println("Found key: " + key);
             } else {
-                System.out.println("剩余候选词与密钥不匹配。密钥是: " + key);
+                System.out.println("Remaining candidate does not match key. Key was: " + key);
             }
             return true;
         }
         
-        // 检查候选词库是否为空
+        // Check if the candidate corpus is empty
         if (candidateCorpus.size() == 0) {
-            System.out.println("没有剩余候选词。密钥是: " + key);
+            System.out.println("No candidates remain. The key was: " + key);
             return true;
         }
         

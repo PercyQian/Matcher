@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Matchle游戏通用工具类
+ * Utility class providing common functions for the Matchle game
  */
 public final class MatchleUtils {
     
@@ -14,16 +14,20 @@ public final class MatchleUtils {
     }
     
     /**
-     * 计算两个集合的交集大小
+     * Calculate the intersection size of two collections
+     * 
+     * @param c1 First collection
+     * @param c2 Second collection
+     * @return The size of the intersection
      */
     public static <T> int intersectionSize(Collection<T> c1, Collection<T> c2) {
-        Set<T> s1 = new HashSet<>(c1);
-        s1.retainAll(c2);
-        return s1.size();
+        Set<T> intersection = new HashSet<>(c1);
+        intersection.retainAll(c2);
+        return intersection.size();
     }
     
     /**
-     * 计算两个字符串的汉明距离（不同位置的字符数量）
+     * Calculate the Hamming distance between two strings (the number of different characters at the same positions)
      */
     public static int hammingDistance(String s1, String s2) {
         if (s1.length() != s2.length()) {

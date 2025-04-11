@@ -5,11 +5,10 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-public final class Filter implements Serializable {
+public class Filter implements Predicate<NGram>, Serializable {
     private static final long serialVersionUID = 1L;
-    
-    // 由于Predicate可能不是Serializable，我们使用transient修饰
-    private final transient Predicate<NGram> predicate;
+    // Since Predicate might not be Serializable, we use transient modifier
+    private transient Predicate<NGram> predicate;
     private String pattern;
 
     private Filter(Predicate<NGram> predicate) {
@@ -17,15 +16,25 @@ public final class Filter implements Serializable {
         this.pattern = "";
     }
 
+    public Filter(Predicate<NGram> predicate, String pattern) {
+        Objects.requireNonNull(predicate, "Predicate cannot be null");
+        this.predicate = predicate;
+        this.pattern = pattern;
+    }
+    
     public static Filter from(Predicate<NGram> predicate) {
         Objects.requireNonNull(predicate, "Predicate cannot be null");
         return new Filter(predicate);
     }
 
+    public Filter withPattern(String pattern) {
+        return new Filter(this.predicate, pattern);
+    }
+
+    @Override
     public boolean test(NGram ngram) {
-        // 如果predicate为null（可能是因为反序列化），我们返回true
-        // 这样可以保证序列化后的Filter仍然可用
-        return predicate != null ? predicate.test(ngram) : true;
+        // If predicate is null (possibly due to deserialization), we return true
+        return predicate == null || predicate.test(ngram);
     }
 
     public Filter and(Optional<Filter> other) {
@@ -34,16 +43,18 @@ public final class Filter implements Serializable {
         }
         
         Filter otherFilter = other.get();
-        return new Filter(ngram -> {
-            boolean thisResult = this.test(ngram);
-            boolean otherResult = otherFilter.test(ngram);
-            return thisResult && otherResult;
-        });
-    }
-
-    public Filter withPattern(String pattern) {
-        this.pattern = pattern;
-        return this;
+        String newPattern = this.pattern;
+        
+        if (!this.pattern.isEmpty() && !otherFilter.pattern.isEmpty()) {
+            newPattern += " AND " + otherFilter.pattern;
+        } else if (this.pattern.isEmpty() && !otherFilter.pattern.isEmpty()) {
+            newPattern = otherFilter.pattern;
+        }
+        
+        return new Filter(
+            ngram -> this.test(ngram) && otherFilter.test(ngram),
+            newPattern
+        );
     }
 
     public static final Filter FALSE = new Filter(ngram -> false);

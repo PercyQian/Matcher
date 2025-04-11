@@ -51,7 +51,8 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
 
     <!--   Class containing the main method: define ONLY IF your project has a main -->
     <!-- TODO: if this project specifies a main class, replace "HelloWorld" with that main class (otherwise, you can ignore this) -->
-    <property name="main-class" value="ReservationSystem"/>
+    <property name="main-class" value="matchle.MatchleGame"/>
+    <property name="gui-class" value="matchle.MatchleGUI"/>
 
     <!--   Additional jar that may be needed for properly runnign junit -->
     <path id="hamcrest.classpath">
@@ -79,6 +80,14 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
         <java fork="true" classname="${main-class}" classpath="${build.dir}">
             <assertions><enable/></assertions>
             <!-- no need to specify input and output files, use standard input and output -->
+            <arg line="${args}"/>
+        </java>
+    </target>
+
+    <!--   ant run-gui : run the GUI version of the game -->
+    <target name="run-gui" depends="build">
+        <java fork="true" classname="${gui-class}" classpath="${build.dir}">
+            <assertions><enable/></assertions>
             <arg line="${args}"/>
         </java>
     </target>

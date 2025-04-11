@@ -1,7 +1,7 @@
 package matchle.exception;
 
 /**
- * Matchle游戏的顶级异常类，所有自定义异常都应继承此类
+ * Top-level exception class for Matchle game, all custom exceptions should extend this class
  */
 public class MatchleException extends RuntimeException {
     

@@ -15,17 +15,17 @@ import java.util.LinkedList;
 import matchle.util.UIUtils;
 
 /**
- * 一个简单的 Swing GUI 版 Matchle 游戏
+ * A simple Swing GUI version of Matchle game
  */
 public class MatchleGUI extends JFrame {
 
-    // 游戏相关数据
-    private Corpus corpus;             // 原始词库
-    private NGram secretKey;           // 随机选出的密钥
-    private Corpus candidateCorpus;    // 当前候选词库（不断缩小）
-    private Filter accumulatedFilter;  // 累积的反馈过滤器（初始为 null）
+    // Game related data
+    private Corpus corpus;             // Original corpus
+    private NGram secretKey;           // Randomly selected secret key
+    private Corpus candidateCorpus;    // Current candidate corpus (continuously narrowing)
+    private Filter accumulatedFilter;  // Accumulated feedback filter (initially null)
 
-    // UI 控件
+    // UI controls
     private JTextField guessField;
     private JTextArea feedbackArea;
     private JLabel candidateLabel;
@@ -37,22 +37,22 @@ public class MatchleGUI extends JFrame {
     private JButton saveGameButton;
     private JButton loadGameButton;
 
-    // 颜色常量
-    private static final Color COLOR_CORRECT = new Color(0, 204, 0); // 绿色
-    private static final Color COLOR_MISPLACED = new Color(255, 204, 0); // 黄色
-    private static final Color COLOR_ABSENT = new Color(102, 102, 102); // 灰色
+    // Color constants
+    private static final Color COLOR_CORRECT = new Color(0, 204, 0); // Green
+    private static final Color COLOR_MISPLACED = new Color(255, 204, 0); // Yellow
+    private static final Color COLOR_ABSENT = new Color(102, 102, 102); // Gray
     private static final Color COLOR_BACKGROUND_LIGHT = Color.WHITE;
     private static final Color COLOR_BACKGROUND_DARK = new Color(50, 50, 50);
     private static final Color COLOR_TEXT_LIGHT = Color.BLACK;
     private static final Color COLOR_TEXT_DARK = Color.WHITE;
     
-    // 主题状态
+    // Theme state
     private boolean darkModeEnabled = false;
 
-    // 添加面板实例变量
+    // Panel instance variables
     private JPanel topPanel;
     private JPanel feedbackPanel;
-    private JScrollPane centerPanel; // 改用JScrollPane以便直接添加
+    private JScrollPane centerPanel; // Using JScrollPane for direct addition
     private JPanel bottomPanel;
 
     public MatchleGUI() {
@@ -64,7 +64,7 @@ public class MatchleGUI extends JFrame {
     }
 
     private void initUI() {
-        // 拆分为多个方法减少复杂度
+        // Split into multiple methods to reduce complexity
         initTopPanel();
         initCenterPanel();
         initBottomPanel();
@@ -74,23 +74,23 @@ public class MatchleGUI extends JFrame {
     }
 
     private void initTopPanel() {
-        // 只包含顶部面板的初始化逻辑
+        // Only contains top panel initialization logic
         JPanel topPanel = new JPanel(new FlowLayout());
         
-        // 初始化难度选择器
-        JLabel difficultyLabel = new JLabel("难度: ");
-        String[] difficulties = {"简单", "中等", "困难"};
+        // Initialize difficulty selector
+        JLabel difficultyLabel = new JLabel("Difficulty: ");
+        String[] difficulties = {"Easy", "Medium", "Hard"};
         difficultySelector = new JComboBox<>(difficulties);
         
-        // 初始化其他控件
-        darkModeToggle = new JToggleButton("暗黑模式");
+        // Initialize other controls
+        darkModeToggle = new JToggleButton("Dark Mode");
         guessField = new JTextField(10);
-        submitButton = new JButton("提交猜测");
-        newGameButton = new JButton("新游戏");
-        saveGameButton = new JButton("保存游戏");
-        loadGameButton = new JButton("加载游戏");
+        submitButton = new JButton("Submit Guess");
+        newGameButton = new JButton("New Game");
+        saveGameButton = new JButton("Save Game");
+        loadGameButton = new JButton("Load Game");
         
-        // 添加到面板
+        // Add to panel
         topPanel.add(difficultyLabel);
         topPanel.add(difficultySelector);
         topPanel.add(darkModeToggle);
@@ -100,7 +100,7 @@ public class MatchleGUI extends JFrame {
         topPanel.add(saveGameButton);
         topPanel.add(loadGameButton);
         
-        // 保存面板引用
+        // Save panel reference
         this.topPanel = topPanel;
     }
 
@@ -117,14 +117,14 @@ public class MatchleGUI extends JFrame {
     }
 
     private void initBottomPanel() {
-        // 只包含底部面板的初始化逻辑
+        // Only contains bottom panel initialization logic
         JPanel bottomPanel = new JPanel(new GridLayout(2, 1));
         candidateLabel = new JLabel("Remaining candidates: ");
         bestGuessLabel = new JLabel("Best guess suggestion: ");
         bottomPanel.add(candidateLabel);
         bottomPanel.add(bestGuessLabel);
         
-        // 保存面板引用
+        // Save panel reference
         this.bottomPanel = bottomPanel;
     }
 
@@ -136,7 +136,7 @@ public class MatchleGUI extends JFrame {
     }
 
     private void registerEventHandlers() {
-        // 按钮事件绑定
+        // Button event binding
         submitButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -152,7 +152,7 @@ public class MatchleGUI extends JFrame {
         saveGameButton.addActionListener(e -> saveGame());
         loadGameButton.addActionListener(e -> loadGame());
 
-        // 新的事件处理
+        // New event handling
         darkModeToggle.addActionListener(e -> toggleDarkMode());
         difficultySelector.addActionListener(e -> adjustDifficulty());
     }
@@ -166,18 +166,18 @@ public class MatchleGUI extends JFrame {
         Color bg = darkModeEnabled ? COLOR_BACKGROUND_DARK : COLOR_BACKGROUND_LIGHT;
         Color fg = darkModeEnabled ? COLOR_TEXT_DARK : COLOR_TEXT_LIGHT;
         
-        // 更新所有组件的颜色
+        // Update colors of all components
         updateComponentColors(this, bg, fg);
         
-        // 刷新UI
+        // Refresh UI
         SwingUtilities.updateComponentTreeUI(this);
     }
 
     /**
-     * 优化递归组件颜色更新，减少复杂度
+     * Optimize recursive component color update, reduce complexity
      */
     private void updateComponentColors(Container container, Color bg, Color fg) {
-        // 使用BFS而不是递归来降低复杂度
+        // Use BFS instead of recursion to reduce complexity
         Queue<Container> queue = new LinkedList<>();
         queue.add(container);
         
@@ -198,7 +198,7 @@ public class MatchleGUI extends JFrame {
     }
 
     private void registerKeyboardShortcuts() {
-        // 添加回车键提交猜测
+        // Add enter key to submit guess
         guessField.getInputMap().put(KeyStroke.getKeyStroke("ENTER"), "submit");
         guessField.getActionMap().put("submit", new AbstractAction() {
             @Override
@@ -207,7 +207,7 @@ public class MatchleGUI extends JFrame {
             }
         });
         
-        // 添加Ctrl+N快捷键创建新游戏
+        // Add Ctrl+N shortcut to create new game
         getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
                 .put(KeyStroke.getKeyStroke("control N"), "newGame");
         getRootPane().getActionMap().put("newGame", new AbstractAction() {
@@ -220,43 +220,43 @@ public class MatchleGUI extends JFrame {
 
     private void adjustDifficulty() {
         String difficulty = (String) difficultySelector.getSelectedItem();
-        // 根据难度调整游戏参数
-        if ("简单".equals(difficulty)) {
-            // 简单模式：提供更多提示
+        // Adjust game parameters based on difficulty
+        if ("Easy".equals(difficulty)) {
+            // Easy mode: provide more hints
             bestGuessLabel.setVisible(true);
-        } else if ("中等".equals(difficulty)) {
-            // 中等模式：隐藏最优猜测
+        } else if ("Medium".equals(difficulty)) {
+            // Medium mode: hide best guess
             bestGuessLabel.setVisible(false);
-        } else if ("困难".equals(difficulty)) {
-            // 困难模式：使用更大的词库，更少的提示
+        } else if ("Hard".equals(difficulty)) {
+            // Hard mode: use larger corpus, fewer hints
             bestGuessLabel.setVisible(false);
-            // 加载更复杂的词库，可以在这里实现
+            // Load more complex corpus, can be implemented here
         }
     }
 
     /**
-     * 优化游戏状态管理，统一保存和加载操作
+     * Optimize game state management, unify save and load operations
      */
     private void handleGameState(boolean isSaving) {
         try {
             if (isSaving) {
                 GameState state = new GameState(secretKey, candidateCorpus, accumulatedFilter);
                 GameStateManager.saveGame(state, "savedgame.dat");
-                UIUtils.showInfoMessage(this, "游戏已保存", "保存成功");
+                UIUtils.showInfoMessage(this, "Game Saved", "Save Successful");
             } else {
                 GameState state = GameStateManager.loadGame("savedgame.dat");
                 applyGameState(state);
-                UIUtils.showInfoMessage(this, "游戏已加载", "加载成功");
+                UIUtils.showInfoMessage(this, "Game Loaded", "Load Successful");
             }
         } catch (Exception ex) {
-            String operation = isSaving ? "保存" : "加载";
-            UIUtils.showErrorMessage(this, operation + "游戏失败: " + ex.getMessage(), 
-                    operation + "错误");
+            String operation = isSaving ? "Save" : "Load";
+            UIUtils.showErrorMessage(this, operation + " Game Failed: " + ex.getMessage(), 
+                    operation + " Error");
         }
     }
 
     /**
-     * 应用载入的游戏状态
+     * Apply loaded game state
      */
     private void applyGameState(GameState state) {
         secretKey = state.getSecretKey();
@@ -265,7 +265,7 @@ public class MatchleGUI extends JFrame {
         updateLabels();
     }
 
-    // 使用优化后的方法
+    // Use optimized method
     private void saveGame() {
         handleGameState(true);
     }
@@ -275,15 +275,15 @@ public class MatchleGUI extends JFrame {
     }
 
     /**
-     * 开始一局新游戏：重置词库、随机选择密钥、清空累积过滤器等
+     * Start a new game: reset corpus, randomly select secret key, clear accumulated filter, etc.
      */
     private void startNewGame() {
         // load the corpus
-        // 使用 CorpusLoader 加载 5 个字母的词库
+        // Use CorpusLoader to load a 5-letter corpus
         corpus = CorpusLoader.loadEnglishWords(5);
         if (corpus == null || corpus.size() == 0) {
             JOptionPane.showMessageDialog(this, "Failed to load corpus. Using default corpus instead.", "Warning", JOptionPane.WARNING_MESSAGE);
-            // 使用默认词库作为后备
+            // Use default corpus as backup
             // use the default corpus as a backup
             corpus = Corpus.Builder.of()
                     .add(NGram.from("rebus"))
@@ -294,11 +294,11 @@ public class MatchleGUI extends JFrame {
         }
 
         // choose a secret key from the corpus
-        // 从 corpus 随机选取一个密钥
+        // Randomly select a key from the corpus
         List<NGram> keyList = new ArrayList<>(corpus.corpus());
         Collections.shuffle(keyList);
         secretKey = keyList.get(0);
-        // 重置候选词库和累积过滤器
+        // Reset candidate corpus and accumulated filter
         candidateCorpus = corpus;
         accumulatedFilter = null;
         feedbackArea.setText("");
@@ -306,7 +306,7 @@ public class MatchleGUI extends JFrame {
         bestGuessLabel.setText("Best guess suggestion: " + candidateCorpus.bestWorstCaseGuess());
         guessField.setText("");
         submitButton.setEnabled(true);
-        // 为了调试，可以在这里打印密钥，实际游戏中可隐藏
+        // For debugging, you can print the key here, it can be hidden in actual game
         System.out.println("Secret key: " + secretKey);
     }
 
@@ -424,12 +424,12 @@ public class MatchleGUI extends JFrame {
         }
         
         NGram remaining = candidateCorpus.corpus().iterator().next();
-        System.out.println("候选词库缩减为一个: " + remaining);
+        System.out.println("Candidate corpus reduced to one: " + remaining);
         
         if (remaining.equals(secretKey)) {
-            System.out.println("找到密钥: " + secretKey);
+            System.out.println("Found key: " + secretKey);
         } else {
-            System.out.println("剩余候选词与密钥不匹配。密钥是: " + secretKey);
+            System.out.println("Remaining candidates do not match the key. Key is: " + secretKey);
         }
         
         return true;
@@ -437,7 +437,7 @@ public class MatchleGUI extends JFrame {
 
     private boolean handleEmptyCorpus() {
         if (candidateCorpus.size() == 0) {
-            System.out.println("没有剩余候选词。密钥是: " + secretKey);
+            System.out.println("No remaining candidates. Key is: " + secretKey);
             return true;
         }
         
