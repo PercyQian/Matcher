@@ -1,5 +1,6 @@
 package matchle;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,7 +11,9 @@ import java.util.Set;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public final class NGram implements  Iterable<IndexedCharacter> {
+public final class NGram implements Iterable<IndexedCharacter>, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final ArrayList<Character> ngram;
     private final Set<Character> charset;
 
@@ -76,7 +79,8 @@ public final class NGram implements  Iterable<IndexedCharacter> {
         return new NGramIterator(); 
     }
 
-    private final class NGramIterator implements Iterator<IndexedCharacter> {
+    private final class NGramIterator implements Iterator<IndexedCharacter>, Serializable {
+        private static final long serialVersionUID = 1L;
         private int index = 0;
 
         @Override

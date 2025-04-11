@@ -1,5 +1,6 @@
 package matchle;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,15 +11,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.ToLongFunction;
 import java.util.stream.Collectors;
-
 import matchle.exception.CorpusException;
 import matchle.exception.CorpusException.EmptyCorpusException;
 
-public final class Corpus implements Iterable<NGram> {
+public final class Corpus implements Iterable<NGram>, Serializable {
+    private static final long serialVersionUID = 1L;
+    
     private final Set<NGram> corpus;
-    private final Map<NGram, Map<NGram, Long>> scoreCache;
-    private final Map<NGram, Long> worstCaseCache;
-    private final Map<NGram, Double> averageCaseCache;
+    private final transient Map<NGram, Map<NGram, Long>> scoreCache;
+    private final transient Map<NGram, Long> worstCaseCache;
+    private final transient Map<NGram, Double> averageCaseCache;
 
     private Corpus(Set<NGram> corpus) {
         this.corpus = Set.copyOf(corpus);

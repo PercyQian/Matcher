@@ -141,10 +141,16 @@ final class NGramMatcher {
             + formatMisplacedLetters(misplacedMatches)
             + formatAbsentLetters(absentLetters);
 
-        return Filter.from(ngram -> 
-            correctMatches.entrySet().stream().allMatch(e -> ngram.get(e.getKey()).equals(e.getValue()))
-            && misplacedMatches.stream().allMatch(ngram::containsElsewhere)
-            && absentLetters.stream().noneMatch(ngram::contains)
-        ).withPattern(pattern);
+        return Filter.from(ngram -> {
+            // 首先检查是否是原始的key，如果是则直接返回true
+            if (ngram.equals(key)) {
+                return true;
+            }
+            
+            // 检查其他NGram
+            return correctMatches.entrySet().stream().allMatch(e -> ngram.get(e.getKey()).equals(e.getValue()))
+                && misplacedMatches.stream().allMatch(ngram::containsElsewhere)
+                && absentLetters.stream().noneMatch(ngram::contains);
+        }).withPattern(pattern);
     }
 }

@@ -6,6 +6,10 @@ import org.junit.Before;
 import org.junit.After;
 import java.io.File;
 import java.io.IOException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -66,5 +70,53 @@ public class GameStateManagerTest {
     public void testLoadNonExistentFile() throws IOException, ClassNotFoundException {
         // 尝试加载不存在的文件，应抛出IOException
         GameStateManager.loadGame("non_existent_file.dat");
+    }
+    
+    @Test
+    public void testFilterSerializability() throws IOException, ClassNotFoundException {
+        // 测试Filter的序列化和反序列化
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(testFilter);
+        oos.close();
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        Filter deserializedFilter = (Filter) ois.readObject();
+        ois.close();
+        
+        // 验证反序列化后的Filter能够通过测试
+        assertNotNull("Deserialized filter should not be null", deserializedFilter);
+        
+        // 原始过滤器应该匹配key
+        assertTrue("Original key should match the filter", testFilter.test(testKey));
+        
+        // 由于Filter中的predicate是transient的，反序列化后的filter会默认对所有输入返回true
+        // 所以这里我们不能期望它有和原始过滤器一样的行为，我们只能验证它能被加载
+        // 测试它的toString输出是否与序列化前一致
+        assertEquals("Filter pattern should be preserved", testFilter.toString(), deserializedFilter.toString());
+    }
+    
+    @Test
+    public void testGameStateSerializability() throws IOException, ClassNotFoundException {
+        // 测试完整的GameState序列化和反序列化，但不通过文件系统
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ObjectOutputStream oos = new ObjectOutputStream(baos);
+        oos.writeObject(testState);
+        oos.close();
+        
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+        ObjectInputStream ois = new ObjectInputStream(bais);
+        GameState deserializedState = (GameState) ois.readObject();
+        ois.close();
+        
+        // 验证反序列化的GameState
+        assertNotNull("Deserialized state should not be null", deserializedState);
+        assertEquals("Secret key should match", 
+                testState.getSecretKey().toString(), 
+                deserializedState.getSecretKey().toString());
+        assertEquals("Corpus size should match", 
+                testState.getCandidateCorpus().size(), 
+                deserializedState.getCandidateCorpus().size());
     }
 } 
