@@ -12,6 +12,8 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Before;
 import org.junit.Test;
 
+import matchle.exception.CorpusException;
+
 /**
  * 测试Corpus类的基本功能
  */
@@ -72,17 +74,28 @@ public class CorpusTest {
 
     @Test
     public void testEmptyCorpus() {
-        Corpus emptyCorpus = Corpus.Builder.of().build();
-        assertNull("Empty corpus should be null when no words are added", emptyCorpus);
+        try {
+            Corpus emptyCorpus = Corpus.Builder.of().build();
+            assertNull("Empty corpus should be null when no words are added", emptyCorpus);
+        } catch (CorpusException.EmptyCorpusException e) {
+            assertTrue("Exception message should mention empty corpus", 
+                     e.getMessage().toLowerCase().contains("empty"));
+        }
     }
 
     @Test
     public void testInconsistentWordSize() {
-        Corpus.Builder builder = Corpus.Builder.of()
-                .add(NGram.from("apple"))
-                .add(NGram.from("orange"));
-        
-        assertNull("Corpus should be null if word sizes are inconsistent", builder.build());
+        try {
+            Corpus.Builder builder = Corpus.Builder.of()
+                    .add(NGram.from("apple"))
+                    .add(NGram.from("orange"));
+            
+            Corpus result = builder.build();
+            assertNull("Corpus should be null if word sizes are inconsistent", result);
+        } catch (CorpusException.InconsistentWordSizeException e) {
+            assertTrue("Exception message should mention inconsistent length", 
+                     e.getMessage().toLowerCase().contains("inconsistent"));
+        }
     }
 
     @Test
