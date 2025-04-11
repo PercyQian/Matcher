@@ -7,7 +7,7 @@ MatcherTest,matchle,GameStateManager,3,26,0,0,1,5,1,2,1,2
 MatcherTest,matchle,IndexedCharacter,0,15,0,0,0,1,0,3,0,3
 MatcherTest,matchle,CorpusLoader,14,184,2,6,7,45,3,6,1,4
 MatcherTest,matchle,GameState,0,21,0,0,0,8,0,4,0,4
-MatcherTest,matchle,MatchleGame,64,112,10,8,19,30,10,1,1,1
+MatcherTest,matchle,MatchleGame,83,189,12,10,21,55,12,14,1,14
 MatcherTest,matchle,NGramMatcher,4,393,2,34,2,75,2,31,0,15
 MatcherTest,matchle,NGram.NGramIterator,0,45,0,4,0,5,0,5,0,3
 MatcherTest,matchle,NGram,21,150,1,11,2,27,3,17,2,12
