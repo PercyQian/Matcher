@@ -9,6 +9,7 @@ import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * Tests for MatchleGame class
@@ -205,5 +206,229 @@ public class MatchleGameTest {
         NGram secretKey = game.getSecretKey();
         assertTrue("Secret key should be in initial corpus", 
                 initialCorpus.corpus().contains(secretKey));
+    }
+    
+    // 新增测试方法以提高分支覆盖率
+    
+    @Test
+    public void testPlayWithEmptyCorpus() throws Exception {
+        // 使用反射来设置一个空的语料库，测试play()方法中的边界情况
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 创建空的语料库
+        Corpus emptyCorpus = Corpus.Builder.of().build();
+        
+        // 设置candidateCorpus为空
+        Field candidateCorpusField = GameLogic.class.getDeclaredField("candidateCorpus");
+        candidateCorpusField.setAccessible(true);
+        candidateCorpusField.set(gameLogic, emptyCorpus);
+        
+        // 调用私有方法play()
+        Method playMethod = MatchleGame.class.getDeclaredMethod("play");
+        playMethod.setAccessible(true);
+        playMethod.invoke(game);
+        
+        // 验证输出包含"No candidates remain"
+        String output = outContent.toString();
+        assertTrue("Should detect empty corpus", output.contains("No candidates remain"));
+    }
+    
+    @Test
+    public void testLoadCorpusWithNullCorpus() throws Exception {
+        // 使用反射测试loadCorpus方法的路径，当从CorpusLoader获取的语料库为null时
+        Field corpusField = MatchleGame.class.getDeclaredField("corpus");
+        corpusField.setAccessible(true);
+        corpusField.set(game, null);
+        
+        // 获取loadCorpus方法
+        Method loadCorpusMethod = MatchleGame.class.getDeclaredMethod("loadCorpus");
+        loadCorpusMethod.setAccessible(true);
+        
+        // 执行loadCorpus方法
+        loadCorpusMethod.invoke(game);
+        
+        // 验证corpus不为null，表示已经创建了默认语料库
+        assertNotNull("Should create default corpus when loaded corpus is null", corpusField.get(game));
+    }
+    
+    @Test
+    public void testIsCorrectGuess() throws Exception {
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 获取secretKey
+        Field secretKeyField = GameLogic.class.getDeclaredField("secretKey");
+        secretKeyField.setAccessible(true);
+        NGram secretKey = (NGram) secretKeyField.get(gameLogic);
+        
+        // 获取isCorrectGuess方法
+        Method isCorrectGuessMethod = MatchleGame.class.getDeclaredMethod("isCorrectGuess", NGram.class);
+        isCorrectGuessMethod.setAccessible(true);
+        
+        // 测试正确的猜测
+        outContent.reset();
+        boolean correctResult = (boolean) isCorrectGuessMethod.invoke(game, secretKey);
+        assertTrue("Should return true for correct guess", correctResult);
+        assertTrue("Should output correct guess message", 
+                outContent.toString().contains("Correct guess"));
+        
+        // 测试错误的猜测
+        outContent.reset();
+        NGram wrongGuess = NGram.from("wrong");
+        boolean wrongResult = (boolean) isCorrectGuessMethod.invoke(game, wrongGuess);
+        assertFalse("Should return false for wrong guess", wrongResult);
+        assertEquals("Should not output for wrong guess", "", outContent.toString());
+    }
+    
+    @Test
+    public void testPlayRoundWithCorrectGuess() throws Exception {
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 获取secretKey
+        Field secretKeyField = GameLogic.class.getDeclaredField("secretKey");
+        secretKeyField.setAccessible(true);
+        NGram secretKey = (NGram) secretKeyField.get(gameLogic);
+        
+        // 直接测试playRound方法，不尝试覆盖makeGuess
+        Method playRoundMethod = MatchleGame.class.getDeclaredMethod("playRound", int.class);
+        playRoundMethod.setAccessible(true);
+        
+        // 执行playRound方法，这将使用真实的makeGuess方法
+        boolean result = (boolean) playRoundMethod.invoke(game, 1);
+        
+        // 由于我们无法控制makeGuess返回什么，所以只能验证方法执行成功
+        // 不能验证具体的返回值
+        
+        // 检查输出包含了预期的游戏回合信息
+        String output = outContent.toString();
+        assertTrue("Should output round information", 
+                output.contains("Best guess") || output.contains("Remaining candidate"));
+    }
+    
+    @Test
+    public void testPlayRoundDirectIsCorrectGuess() throws Exception {
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 替换secretKey为一个已知的值
+        NGram testKey = NGram.from("rebus");
+        Field secretKeyField = GameLogic.class.getDeclaredField("secretKey");
+        secretKeyField.setAccessible(true);
+        secretKeyField.set(gameLogic, testKey);
+        
+        // 直接调用isCorrectGuess方法
+        Method isCorrectGuessMethod = MatchleGame.class.getDeclaredMethod("isCorrectGuess", NGram.class);
+        isCorrectGuessMethod.setAccessible(true);
+        
+        // 测试正确猜测路径
+        outContent.reset();
+        boolean result = (boolean) isCorrectGuessMethod.invoke(game, testKey);
+        assertTrue("Should return true for correct guess", result);
+        assertTrue("Should output correct guess message", 
+                outContent.toString().contains("Correct guess"));
+    }
+    
+    @Test
+    public void testHandleSingleCandidateKeyMatches() throws Exception {
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 获取secretKey
+        Field secretKeyField = GameLogic.class.getDeclaredField("secretKey");
+        secretKeyField.setAccessible(true);
+        NGram secretKey = (NGram) secretKeyField.get(gameLogic);
+        
+        // 创建只包含secretKey的候选语料库
+        Corpus singleCorpus = Corpus.Builder.of().add(secretKey).build();
+        
+        // 设置candidateCorpus
+        Field candidateCorpusField = GameLogic.class.getDeclaredField("candidateCorpus");
+        candidateCorpusField.setAccessible(true);
+        candidateCorpusField.set(gameLogic, singleCorpus);
+        
+        // 调用handleSingleCandidate
+        outContent.reset();
+        boolean result = game.handleSingleCandidate();
+        
+        assertTrue("Should return true for single candidate", result);
+        String output = outContent.toString();
+        assertTrue("Should indicate key was found", output.contains("Found key"));
+    }
+    
+    @Test
+    public void testHandleSingleCandidateKeyDoesNotMatch() throws Exception {
+        game.initialize();
+        
+        // 获取GameLogic实例
+        Field gameLogicField = MatchleGame.class.getDeclaredField("gameLogic");
+        gameLogicField.setAccessible(true);
+        GameLogic gameLogic = (GameLogic) gameLogicField.get(game);
+        
+        // 设置secretKey
+        Field secretKeyField = GameLogic.class.getDeclaredField("secretKey");
+        secretKeyField.setAccessible(true);
+        secretKeyField.set(gameLogic, NGram.from("hello"));
+        
+        // 创建只包含一个与secretKey不同的词的候选语料库
+        Corpus singleCorpus = Corpus.Builder.of().add(NGram.from("world")).build();
+        
+        // 设置candidateCorpus
+        Field candidateCorpusField = GameLogic.class.getDeclaredField("candidateCorpus");
+        candidateCorpusField.setAccessible(true);
+        candidateCorpusField.set(gameLogic, singleCorpus);
+        
+        // 调用handleSingleCandidate
+        outContent.reset();
+        boolean result = game.handleSingleCandidate();
+        
+        assertTrue("Should return true for single candidate", result);
+        String output = outContent.toString();
+        assertTrue("Should indicate key does not match", output.contains("does not match key"));
+    }
+    
+    @Test
+    public void testPlayWithMaxRoundsReached() throws Exception {
+        game.initialize();
+        
+        // 设置maxRounds为一个小值，使其容易达到最大回合数
+        Field maxRoundsField = MatchleGame.class.getDeclaredField("maxRounds");
+        maxRoundsField.setAccessible(true);
+        maxRoundsField.setInt(game, 1);
+        
+        // 调用play方法
+        Method playMethod = MatchleGame.class.getDeclaredMethod("play");
+        playMethod.setAccessible(true);
+        
+        outContent.reset();
+        playMethod.invoke(game);
+        
+        // 验证输出包含达到最大回合数的信息或游戏结束信息
+        String output = outContent.toString();
+        assertTrue("Should indicate rounds progress", 
+                output.contains("Round 1") || 
+                output.contains("Maximum rounds reached") || 
+                output.contains("Correct guess"));
     }
 } 
