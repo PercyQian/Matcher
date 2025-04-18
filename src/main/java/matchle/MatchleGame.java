@@ -11,11 +11,18 @@ public class MatchleGame {
     
     public static void main(String[] args) {
         MatchleGame game = new MatchleGame();
-        game.initialize();
-        game.play();
+        game.playGame();
     }
     
-    private void initialize() {
+    /**
+     * 公共方法，用于启动游戏
+     */
+    public void playGame() {
+        initialize();
+        play();
+    }
+    
+    public void initialize() {
         loadCorpus();
         gameLogic.initialize(corpus);
         System.out.println("Secret key (hidden): " + gameLogic.getSecretKey());
@@ -65,17 +72,17 @@ public class MatchleGame {
         return false;
     }
     
-    private void updateGameState(NGram guess) {
+    public void updateGameState(NGram guess) {
         Filter roundFilter = gameLogic.processGuess(guess);
         System.out.println("Round filter: " + roundFilter);
         System.out.println("Remaining candidate count: " + gameLogic.getCandidateCorpus().size());
     }
     
-    private boolean checkGameTermination() {
+    public boolean checkGameTermination() {
         return handleSingleCandidate() || handleEmptyCorpus();
     }
     
-    private boolean handleSingleCandidate() {
+    public boolean handleSingleCandidate() {
         Corpus candidateCorpus = gameLogic.getCandidateCorpus();
         if (candidateCorpus.size() != 1) {
             return false;
@@ -93,12 +100,33 @@ public class MatchleGame {
         return true;
     }
     
-    private boolean handleEmptyCorpus() {
+    public boolean handleEmptyCorpus() {
         if (gameLogic.getCandidateCorpus().size() == 0) {
             System.out.println("No candidates remain. The key was: " + gameLogic.getSecretKey());
             return true;
         }
         
         return false;
+    }
+
+    // Getter methods
+    public Filter getAccumulatedFilter() {
+        return gameLogic.getAccumulatedFilter();
+    }
+
+    public Corpus getCandidateCorpus() {
+        return gameLogic.getCandidateCorpus();
+    }
+
+    public Corpus getInitialCorpus() {
+        return corpus;
+    }
+
+    public NGram getBestGuess() {
+        return gameLogic.getBestGuess();
+    }
+
+    public NGram getSecretKey() {
+        return gameLogic.getSecretKey();
     }
 }
