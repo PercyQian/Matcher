@@ -11,18 +11,18 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * 性能压力测试，测试大规模词库下的算法表现
+ * performance test for large corpus
  */
 public class CorpusPerformanceTest {
     
     private Corpus largeCorpus;
-    private static final int CORPUS_SIZE = 500; // 更大的测试可以设置更高的值
+    private static final int CORPUS_SIZE = 500; // large corpus size
     private static final int WORD_LENGTH = 5;
     
     @Before
     public void setUp() {
-        // 生成大量随机单词作为测试词库
-        Random random = new Random(42); // 固定种子以确保测试可重复
+        // generate large corpus of random words
+        Random random = new Random(42); // fixed seed for reproducibility
         List<Character> chars = List.of('a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
                 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z');
         
@@ -48,22 +48,22 @@ public class CorpusPerformanceTest {
         long endTime = System.nanoTime();
         long durationMs = TimeUnit.NANOSECONDS.toMillis(endTime - startTime);
         
-        // 记录执行时间，以便进行性能分析
+        // record execution time for performance analysis
         System.out.println("bestWorstCaseGuess took " + durationMs + " ms for corpus size " + CORPUS_SIZE);
         
         assertNotNull("Best worst-case guess should be found", bestGuess);
-        // 实际项目中可能需要设置一个合理的时间上限
+        // in actual project, we may need to set a reasonable time limit
         assertTrue("bestWorstCaseGuess should complete within 30 seconds", durationMs < 30000);
     }
     
     @Test
     public void testMemoryUsage() {
-        // 记录执行前的内存使用
+        // record memory usage before execution
         Runtime runtime = Runtime.getRuntime();
         runtime.gc();
         long usedMemoryBefore = runtime.totalMemory() - runtime.freeMemory();
         
-        // 执行多次评分操作
+        // execute multiple scoring operations
         List<NGram> ngrams = new ArrayList<>(largeCorpus.corpus());
         NGram testGuess = ngrams.get(0);
         
@@ -71,15 +71,15 @@ public class CorpusPerformanceTest {
             largeCorpus.scoreWorstCase(testGuess);
         }
         
-        // 记录执行后的内存使用
+        // record memory usage after execution
         runtime.gc();
         long usedMemoryAfter = runtime.totalMemory() - runtime.freeMemory();
         
-        // 计算内存增长
+        // calculate memory growth
         long memoryGrowth = usedMemoryAfter - usedMemoryBefore;
         System.out.println("Memory growth after 100 scoreWorstCase calls: " + memoryGrowth + " bytes");
         
-        // 确保内存增长在合理范围内
+        // ensure memory growth is within a reasonable range
         assertTrue("Memory growth should be less than 100MB", memoryGrowth < 100 * 1024 * 1024);
     }
 } 
