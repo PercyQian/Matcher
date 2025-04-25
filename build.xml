@@ -148,12 +148,30 @@ $ANT_HOME/lib must contain (see Ant-JUnit and JaCoCo installation guides):
     </target>
 
     <!--   ant doc: generate JavaDoc documentation -->
-    <target name="doc">
+    <target name="doc" depends="build" description="Generate JavaDoc API documentation">
         <mkdir dir="${doc.dir}"/>
-        <javadoc destdir="${doc.dir}" package="yes">
+        <javadoc sourcepath="${src.dir}"
+                 destdir="${doc.dir}"
+                 packagenames="matchle,matchle.exception,matchle.scoring,matchle.util"
+                 author="true"
+                 version="true"
+                 use="true"
+                 windowtitle="Matchle Game API Documentation"
+                 doctitle="&lt;h1&gt;Matchle Game API Documentation&lt;/h1&gt;"
+                 bottom="&lt;i&gt;Copyright &amp;copy; 2023 Matchle Game. All Rights Reserved.&lt;/i&gt;"
+                 encoding="UTF-8"
+                 additionalparam="-Xdoclint:none">
+            <classpath refid="project.classpath"/>
+            <link href="https://docs.oracle.com/en/java/javase/17/docs/api/"/>
             <fileset dir="${src.dir}" defaultexcludes="yes">
-                <exclude name="**/*Test.java"/>
+                <include name="**/matchle/**/*.java"/>
+                <exclude name="**/matchle/**/*Test*.java"/>
+                <exclude name="**/test/**/*.java"/>
             </fileset>
+            <group title="Core Classes" packages="matchle"/>
+            <group title="Utilities" packages="matchle.util"/>
+            <group title="Scoring" packages="matchle.scoring"/>
+            <group title="Exceptions" packages="matchle.exception"/>
         </javadoc>
     </target>
 
