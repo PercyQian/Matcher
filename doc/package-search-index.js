@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"matchle"},{"l":"matchle.exception"},{"l":"matchle.scoring"},{"l":"matchle.util"}];updateSearchResults();
